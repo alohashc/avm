@@ -21,7 +21,7 @@ Lexer::Lexer(const Lexer &) {}
 
 Lexer& Lexer::operator=(const Lexer &) {}
 
-Lexer::~Lexer() {}
+Lexer::~Lexer() = default;
 
 void Lexer::start() {
     if (_isFile) {
@@ -35,9 +35,14 @@ void Lexer::start() {
         std::string str;
 
         while (getline(std::cin, str)) {
-            if (str == ";;")
-                break;
-            eachLine(str);
+            try {
+                if (str == ";;")
+                    break;
+                eachLine(str);
+            }
+            catch (AvmExcept &e) {
+                std::cerr << e.what() << std::endl;
+            }
         }
     }
 }

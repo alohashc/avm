@@ -10,14 +10,6 @@
 #include <limits>
 #include "AvmExcept.hpp"
 
-//template <typename T>
-//void isOverFlow(T &val) {
-//    T max = std::numeric_limits<T>::max();
-//    T min = std::numeric_limits<T>::min();
-//    if (val > max || val < min)
-//        throw std::range_error("ERROR: OVERFLOW");
-//}
-
 template <class T>
 class Operand :public IOperand{
 public:
@@ -28,9 +20,15 @@ public:
         if (_precision > Int32)
             _str = removeZerosInString(_str);
         if (type < Float) {
-            long long val = std::stoll(_str);
-            isOverFlow<long long>(val);
-            _value = static_cast<T>(val);
+            try {
+                long long val = std::stoll(_str);
+                isOverFlow<long long>(val);
+                _value = static_cast<T>(val);
+            }
+            catch (...) {
+                std::cerr << "OVERFLOW" << std::endl;
+            }
+
         }
         else {
             long double val = std::stold(_str);

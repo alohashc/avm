@@ -62,7 +62,6 @@ void Parser::assert(std::list<Token>::iterator &it) {
     const IOperand* first = *(_stack.begin());
     if (next->_value != first->toString())
         throw AvmExcept("ASSERT ERROR: different values");
-    std::cout << "TODO: " << first->getType() << " " << next->_type << std::endl;
     if (next->_type - INT8 != first->getType())
         throw AvmExcept("ASSERT ERROR: different values");
 }
@@ -121,10 +120,10 @@ void Parser::div(std::list<Token>::iterator &it) {
     const IOperand* first = *(_stack.begin());
     _stack.pop_front();
     const IOperand* second = *(_stack.begin());
-    if (second->toString() == "0")
+    if (first->toString() == "0")
         throw AvmExcept("ERROR: division on 0");
     _stack.pop_front();
-    _stack.push_front(*first / *second);
+    _stack.push_front(*second / *first);
     delete first;
     delete second;
 }
@@ -136,10 +135,10 @@ void Parser::mod(std::list<Token>::iterator &it) {
     const IOperand* first = *(_stack.begin());
     _stack.pop_front();
     const IOperand* second = *(_stack.begin());
-    if (second->toString() == "0")
+    if (first->toString() == "0")
         throw AvmExcept("ERROR: division on 0");
     _stack.pop_front();
-    _stack.push_front(*first % *second);
+    _stack.push_front(*second % *first);
     delete first;
     delete second;
 }

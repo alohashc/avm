@@ -3,19 +3,16 @@
 #include "Parser.hpp"
 #include "AvmExcept.hpp"
 
-// check exception
-// check includes
-
 int main(int ac, char **av) {
-    try {
-        Lexer lexer(ac, av);
-        lexer.start();
+    Lexer lexer(ac, av);
+    lexer.start();
 
+    try {
         Parser parser(lexer.getTokens());
         parser.start();
     }
     catch (AvmExcept &e) {
-        std::cerr <<  << e.what() <<  << std::endl;
+        std::cerr << e.what() << std::endl;
     }
     return 0;
 }
