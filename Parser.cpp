@@ -24,11 +24,14 @@ Parser::~Parser() {}
 
 Parser::Parser(const Parser &) {}
 
-Parser& Parser::operator=(const Parser &) {}
+Parser& Parser::operator=(const Parser &) {
+    return *this;
+}
 
 void Parser::start() {
     std::string tmp;
-    auto iter = _tokens.begin();
+    bool isExit =  false;
+
     for (auto &_token : _tokens) {
         if (_token._type > COMMENT) {
             tmp = _token._value;
@@ -38,10 +41,14 @@ void Parser::start() {
         }
     }
     for (auto it = _tokens.begin(); it != _tokens.end(); ++it) {
+        if (it->_value == "exit")
+            isExit = true;
         void (Parser::*func)(std::list<Token>::iterator& it);
         func = _instr.at(it->_type);
         (this->*func)(it);
     }
+    if (!isExit)
+        throw AvmExcept("EXIT ERROR");
 }
 
 void Parser::push(std::list<Token>::iterator &it) {
@@ -50,6 +57,7 @@ void Parser::push(std::list<Token>::iterator &it) {
 }
 
 void Parser::pop(std::list<Token>::iterator &it) {
+    (void)it;
     if (_stack.empty())
         throw AvmExcept("ERROR: stack is empty");
     _stack.pop_front();

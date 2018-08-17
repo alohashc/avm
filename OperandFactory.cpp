@@ -16,7 +16,9 @@ OperandFactory::OperandFactory() {
 
 OperandFactory::OperandFactory(const OperandFactory &) {}
 
-OperandFactory& OperandFactory::operator=(const OperandFactory &) {}
+OperandFactory& OperandFactory::operator=(const OperandFactory &) {
+    return *this;
+}
 
 OperandFactory::~OperandFactory() {}
 
@@ -27,7 +29,7 @@ IOperand const* OperandFactory::createOperand(eOperandType type, std::string con
 }
 
 IOperand const* OperandFactory::createInt8(std::string const &value) const {
-    return new Operand<char >(Int8, 0, value);
+    return new Operand<char>(Int8, 0, value);
 }
 
 IOperand const* OperandFactory::createInt16(std::string const &value) const {

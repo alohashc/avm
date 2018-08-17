@@ -133,10 +133,10 @@ public:
     }
 
 private:
-    T               _value; // value which will be added to stack
-    int             _precision;
     eOperandType    _type;
+    int             _precision;
     std::string     _str;
+    T               _value; // value which will be added to stack
 };
 
 #endif //AVM_OPERAND_HPP

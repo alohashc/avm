@@ -19,7 +19,9 @@ Lexer::Lexer(int ac, char **av) {
 
 Lexer::Lexer(const Lexer &) {}
 
-Lexer& Lexer::operator=(const Lexer &) {}
+Lexer& Lexer::operator=(const Lexer &) {
+    return *this;
+}
 
 Lexer::~Lexer() = default;
 
@@ -35,9 +37,9 @@ void Lexer::start() {
         std::string str;
 
         while (getline(std::cin, str)) {
+            if (str == ";;")
+                break;
             try {
-                if (str == ";;")
-                    break;
                 eachLine(str);
             }
             catch (AvmExcept &e) {
@@ -49,7 +51,7 @@ void Lexer::start() {
 
 void Lexer::eachLine(std::string &str) {
     size_t found = str.find(';');
-    if (found != std::string::npos) {
+    if (found != std::string::npos && str != ";;") {
         if (found == 0)
             return ;
         str = str.substr(0, found);
@@ -71,10 +73,14 @@ void Lexer::eachLine(std::string &str) {
         Token token;
         cnt++;
 
+//        if (s == ";;" && _tokens.back()._value != "exit")
+//            throw AvmExcept("absent exit instruction before");
+//        if (s == ";;" && _tokens.back()._value == "exit")
+//            exit (0);
         if (cnt == 1)
             token = isInst(cnt, s, iss);
         if (cnt == 2)
-            token = isValue(cnt, s);
+            token = isValue(s);
         if (cnt > 2)
             throw AvmExcept("ERROR: LEXER3");
         _tokens.push_back(token);
@@ -108,7 +114,7 @@ Token Lexer::isInst(int &cnt, std::string &str, std::istringstream &iss) {
     return token;
 }
 
-Token Lexer::isValue(int &cnt, std::string &str) {
+Token Lexer::isValue(std::string &str) {
     std::map<std::string, tokenType> typeValue = {std::make_pair("int8", INT8),
                                                   std::make_pair("int16", INT16),
                                                   std::make_pair("int32", INT32),

@@ -29,6 +29,7 @@ enum tokenType{
     INT32,
     FLOAT,
     DOUBLE,
+    END
 };
 
 struct Token {
@@ -47,7 +48,7 @@ public:
     void start();
     void eachLine(std::string &str);
     Token isInst(int &cnt, std::string &str, std::istringstream &iss);
-    Token isValue(int &cnt, std::string &str);
+    Token isValue(std::string &str);
 
     std::list<Token>& getTokens();
 

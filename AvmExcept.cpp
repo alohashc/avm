@@ -10,7 +10,9 @@ AvmExcept::AvmExcept(const AvmExcept &) {}
 
 AvmExcept::~AvmExcept() throw(){}
 
-const AvmExcept& AvmExcept::operator=(const AvmExcept &) {}
+const AvmExcept& AvmExcept::operator=(const AvmExcept &) {
+    return *this;
+}
 
 const char* AvmExcept::what() const throw(){
     return _msg.c_str();
