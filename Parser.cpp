@@ -4,7 +4,6 @@
 
 #include "Parser.hpp"
 #include <regex>
-#include "AvmExcept.hpp"
 
 Parser::Parser(std::list<Token> &tokens) : _tokens(tokens){
     _instr[PUSH] = &Parser::push;
@@ -22,9 +21,16 @@ Parser::Parser(std::list<Token> &tokens) : _tokens(tokens){
 
 Parser::~Parser() {}
 
-Parser::Parser(const Parser &) {}
+Parser::Parser(const Parser &src) {
+    if (!src._tokens.empty())
+        *this = src;
+}
 
-Parser& Parser::operator=(const Parser &) {
+Parser& Parser::operator=(const Parser &rhs) {
+    this->_tokens = rhs._tokens;
+    this->_factory = rhs._factory;
+    this->_instr = rhs._instr;
+    this->_stack = rhs._stack;
     return *this;
 }
 
@@ -45,10 +51,15 @@ void Parser::start() {
             isExit = true;
         void (Parser::*func)(std::list<Token>::iterator& it);
         func = _instr.at(it->_type);
-        (this->*func)(it);
+        try {
+            (this->*func)(it);
+        }
+        catch (AvmExcept &e) {
+            std::cerr << e.what() << std::endl;
+        }
     }
     if (!isExit)
-        throw AvmExcept("EXIT ERROR");
+        throw AvmExcept("ERROR: exit instruction not found");
 }
 
 void Parser::push(std::list<Token>::iterator &it) {
@@ -160,8 +171,6 @@ void Parser::print(std::list<Token>::iterator &it) {
         throw AvmExcept("Print instruction on no 8-bit integer");
     std::cout << static_cast<char>(std::stoi(first->toString())) << std::endl;
 }
-
-// have a questions about this command
 
 void Parser::exit(std::list<Token>::iterator &it) {
     (void)it;

@@ -14,9 +14,13 @@ OperandFactory::OperandFactory() {
     _createFunc[Double] = &OperandFactory::createDouble;
 }
 
-OperandFactory::OperandFactory(const OperandFactory &) {}
+OperandFactory::OperandFactory(const OperandFactory &src) {
+    if (!src._createFunc.empty())
+        *this = src;
+}
 
-OperandFactory& OperandFactory::operator=(const OperandFactory &) {
+OperandFactory& OperandFactory::operator=(const OperandFactory &rhs) {
+    this->_createFunc = rhs._createFunc;
     return *this;
 }
 

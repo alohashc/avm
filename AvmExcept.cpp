@@ -6,11 +6,14 @@
 
 AvmExcept::AvmExcept(const std::string &str) :_msg(str) {}
 
-AvmExcept::AvmExcept(const AvmExcept &) {}
+AvmExcept::AvmExcept(const AvmExcept &src) {
+    *this = src;
+}
 
 AvmExcept::~AvmExcept() throw(){}
 
-const AvmExcept& AvmExcept::operator=(const AvmExcept &) {
+const AvmExcept& AvmExcept::operator=(const AvmExcept &rhs) {
+    this->_msg = rhs._msg;
     return *this;
 }
 

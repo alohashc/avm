@@ -5,35 +5,41 @@
 #include "Lexer.hpp"
 #include "AvmExcept.hpp"
 #include <regex>
-#include <istream>
+#include <sstream>
+#include <map>
 
 Lexer::Lexer(int ac, char **av) {
     if (ac > 2)
         throw AvmExcept("ERROR: invalid input");
     else if (ac == 2) {
         _ifs.open(av[1]);
-        _isFile = true;
+        _isInputorFile = 1;
     } else
-        _isInput = true;
+        _isInputorFile = 2;
 }
 
-Lexer::Lexer(const Lexer &) {}
+Lexer::Lexer(const Lexer &src) {
+    if (!src._tokens.empty())
+        *this = src;
+}
 
-Lexer& Lexer::operator=(const Lexer &) {
+Lexer& Lexer::operator=(const Lexer &rhs) {
+    this->_tokens = rhs._tokens;
+    this->_isInputorFile = rhs._isInputorFile;
     return *this;
 }
 
 Lexer::~Lexer() = default;
 
 void Lexer::start() {
-    if (_isFile) {
+    if (_isInputorFile == 1) {
         std::string str;
 
         while (getline(_ifs, str)) {
                 eachLine(str);
         }
     }
-    if (_isInput) {
+    if (_isInputorFile == 2) {
         std::string str;
 
         while (getline(std::cin, str)) {
@@ -51,7 +57,7 @@ void Lexer::start() {
 
 void Lexer::eachLine(std::string &str) {
     size_t found = str.find(';');
-    if (found != std::string::npos && str != ";;") {
+    if (found != std::string::npos) {
         if (found == 0)
             return ;
         str = str.substr(0, found);
@@ -73,16 +79,12 @@ void Lexer::eachLine(std::string &str) {
         Token token;
         cnt++;
 
-//        if (s == ";;" && _tokens.back()._value != "exit")
-//            throw AvmExcept("absent exit instruction before");
-//        if (s == ";;" && _tokens.back()._value == "exit")
-//            exit (0);
         if (cnt == 1)
             token = isInst(cnt, s, iss);
         if (cnt == 2)
             token = isValue(s);
         if (cnt > 2)
-            throw AvmExcept("ERROR: LEXER3");
+            throw AvmExcept("ERROR: invalid instruction line");
         _tokens.push_back(token);
     }
 }
@@ -102,11 +104,11 @@ Token Lexer::isInst(int &cnt, std::string &str, std::istringstream &iss) {
     Token token;
 
     if ((str == "push" || str == "assert") && iss.peek() == EOF)
-        throw AvmExcept("ERROR: LEXER0");
+        throw AvmExcept("ERROR: <push> and <assert> using only with value");
     std::map<std::string, tokenType>::iterator it;
     it = instr.find(str);
     if (it == instr.end())
-        throw AvmExcept("ERROR: LEXER ");
+        throw AvmExcept("ERROR: invalid instruction ");
     token._type = it->second;
     token._value = it->first;
     if (str != "push" && str != "assert")
@@ -134,10 +136,10 @@ Token Lexer::isValue(std::string &str) {
             }
         }
         if (found == std::string::npos)
-            throw AvmExcept("ERROR: LEXER1");
+            throw AvmExcept("ERROR: invalid type of value");
     }
     else
-        throw AvmExcept("ERROR: LEXER2");
+        throw AvmExcept("ERROR: invalid value");
     return token;
 }
 

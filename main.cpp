@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Lexer.hpp"
 #include "Parser.hpp"
-#include "AvmExcept.hpp"
 
 int main(int ac, char **av) {
     Lexer lexer(ac, av);

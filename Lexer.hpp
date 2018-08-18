@@ -10,7 +10,6 @@
 #include <list>
 #include "IOperand.hpp"
 
-//check each case
 enum tokenType{
     PUSH,
     POP,
@@ -28,8 +27,7 @@ enum tokenType{
     INT16,
     INT32,
     FLOAT,
-    DOUBLE,
-    END
+    DOUBLE
 };
 
 struct Token {
@@ -53,8 +51,7 @@ public:
     std::list<Token>& getTokens();
 
 private:
-    bool                _isFile = false;
-    bool                _isInput = false;
+    int                 _isInputorFile;
     std::list<Token>   _tokens;
     std::ifstream       _ifs;
 };
