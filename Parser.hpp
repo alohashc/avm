@@ -8,6 +8,7 @@
 #include "Lexer.hpp"
 #include <stack>
 #include "OperandFactory.hpp"
+#include "AvmExcept.hpp"
 
 class Parser {
 public:

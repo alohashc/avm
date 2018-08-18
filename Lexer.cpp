@@ -18,17 +18,6 @@ Lexer::Lexer(int ac, char **av) {
         _isInputorFile = 2;
 }
 
-Lexer::Lexer(const Lexer &src) {
-    if (!src._tokens.empty())
-        *this = src;
-}
-
-Lexer& Lexer::operator=(const Lexer &rhs) {
-    this->_tokens = rhs._tokens;
-    this->_isInputorFile = rhs._isInputorFile;
-    return *this;
-}
-
 Lexer::~Lexer() = default;
 
 void Lexer::start() {
@@ -36,7 +25,12 @@ void Lexer::start() {
         std::string str;
 
         while (getline(_ifs, str)) {
+            try {
                 eachLine(str);
+            }
+            catch (AvmExcept &e) {
+                std::cerr << e.what() << std::endl;
+            }
         }
     }
     if (_isInputorFile == 2) {
@@ -135,11 +129,15 @@ Token Lexer::isValue(std::string &str) {
                 break;
             }
         }
-        if (found == std::string::npos)
+        if (found == std::string::npos) {
+            _tokens.pop_front();
             throw AvmExcept("ERROR: invalid type of value");
+        }
     }
-    else
+    else {
+        _tokens.pop_front();
         throw AvmExcept("ERROR: invalid value");
+    }
     return token;
 }
 

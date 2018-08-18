@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 #include "OperandFactory.hpp"
+#include "Operand.hpp"
 
 
 OperandFactory::OperandFactory() {
@@ -12,16 +13,6 @@ OperandFactory::OperandFactory() {
     _createFunc[Int32] = &OperandFactory::createInt32;
     _createFunc[Float] = &OperandFactory::createFloat;
     _createFunc[Double] = &OperandFactory::createDouble;
-}
-
-OperandFactory::OperandFactory(const OperandFactory &src) {
-    if (!src._createFunc.empty())
-        *this = src;
-}
-
-OperandFactory& OperandFactory::operator=(const OperandFactory &rhs) {
-    this->_createFunc = rhs._createFunc;
-    return *this;
 }
 
 OperandFactory::~OperandFactory() {}
@@ -33,21 +24,21 @@ IOperand const* OperandFactory::createOperand(eOperandType type, std::string con
 }
 
 IOperand const* OperandFactory::createInt8(std::string const &value) const {
-    return new Operand<char>(Int8, 0, value);
+    return new Operand<char>(Int8, 0, value, this);
 }
 
 IOperand const* OperandFactory::createInt16(std::string const &value) const {
-    return (new Operand<short>(Int16, 1, value));
+    return (new Operand<short>(Int16, 1, value, this));
 }
 
 IOperand const* OperandFactory::createInt32(std::string const &value) const {
-    return (new Operand<int>(Int32, 2, value));
+    return (new Operand<int>(Int32, 2, value, this));
 }
 
 IOperand const* OperandFactory::createFloat(std::string const &value) const {
-    return (new Operand<float>(Float, 3, value));
+    return (new Operand<float>(Float, 3, value, this));
 }
 
 IOperand const* OperandFactory::createDouble(std::string const &value) const {
-    return new Operand<double>(Double, 4, value);
+    return new Operand<double>(Double, 4, value, this);
 }

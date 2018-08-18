@@ -21,19 +21,6 @@ Parser::Parser(std::list<Token> &tokens) : _tokens(tokens){
 
 Parser::~Parser() {}
 
-Parser::Parser(const Parser &src) {
-    if (!src._tokens.empty())
-        *this = src;
-}
-
-Parser& Parser::operator=(const Parser &rhs) {
-    this->_tokens = rhs._tokens;
-    this->_factory = rhs._factory;
-    this->_instr = rhs._instr;
-    this->_stack = rhs._stack;
-    return *this;
-}
-
 void Parser::start() {
     std::string tmp;
     bool isExit =  false;

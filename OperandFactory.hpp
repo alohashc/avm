@@ -5,7 +5,7 @@
 #ifndef AVM_OPERANDFACTORY_HPP
 #define AVM_OPERANDFACTORY_HPP
 
-#include "Operand.hpp"
+#include "IOperand.hpp"
 #include <string>
 #include <map>
 
