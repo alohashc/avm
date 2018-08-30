@@ -143,6 +143,7 @@ void Parser::mod(std::list<Token>::iterator &it) {
     const IOperand* second = *(_stack.begin());
     if (first->toString() == "0")
         throw AvmExcept("ERROR: division on 0");
+    std::cout << 5 % 7 << std::endl;
     _stack.pop_front();
     _stack.push_front(*second % *first);
     delete first;

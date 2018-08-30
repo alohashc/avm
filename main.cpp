@@ -6,12 +6,8 @@ int main(int ac, char **av) {
     Lexer lexer(ac, av);
     lexer.start();
 
-    try {
-        Parser parser(lexer.getTokens());
-        parser.start();
-    }
-    catch (AvmExcept &e) {
-        std::cerr << e.what() << std::endl;
-    }
+    Parser parser(lexer.getTokens());
+    parser.start();
+
     return 0;
 }

@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include <limits>
+#include <iomanip>
 #include "AvmExcept.hpp"
 #include "OperandFactory.hpp"
 
@@ -16,33 +17,31 @@ public:
     Operand();
     Operand(eOperandType type, int precision, std::string const &str, const OperandFactory *op) : _type(type),
                                                           _precision(precision),
-                                                          _str(str), _op(op){
-        if (_precision > Int32)
-            _str = removeZerosInString(_str);
-        if (type < Float) {
-            try {
-                size_t pos = str.find('.');
-                _str = str.substr(0, pos);
-                long long val = std::stoll(_str);
+                                                          _op(op){
+        std::stringstream ss;
+
+        try {
+            if (type < Float) {
+                long long val = std::stoll(str);
                 isOverFlow<long long>(val);
                 _value = static_cast<T>(val);
-            }
-            catch (std::exception) {
-                throw AvmExcept("OVERFLOW");
-            }
+                ss << std::setprecision(_precision) << val;
+                _str = ss.str();
 
-        }
-        else {
-            try {
-                long double val = std::stold(_str);
+            }
+            else {
+                long double val = std::stold(str);
                 isOverFlow<long double>(val);
                 _value = static_cast<T>(val);
-            }
-            catch (std::exception) {
-                throw AvmExcept("OVERFLOW");
-            }
+                ss << std::setprecision(_precision) << val;
+                _str = ss.str();
 
+            }
         }
+        catch (AvmExcept &e) {
+            std::cerr << e.what() << std::endl;
+        }
+
     }
     Operand(const Operand& src);
     ~Operand() {}
@@ -56,60 +55,74 @@ public:
 
     IOperand const * operator+( IOperand const & rhs ) const {
         eOperandType type = ( _type >= rhs.getType() ) ? _type : rhs.getType();
-//        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
-        std::istringstream iss(rhs.toString());
-        T right;
-        iss >> right;
-        T res = _value + right;
-        std::string ss = std::to_string(res);
-
-        return (_op->createOperand(type, ss));
+        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
+        std::stringstream ss;
+        if (type < Float) {
+            long long val = std::stoll(_str) + std::stoll(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        else {
+            long double val = std::stold(_str) + std::stold(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        return (_op->createOperand(type, ss.str()));
     }
 
     IOperand const * operator-( IOperand const & rhs ) const {
         eOperandType type = ( _type >= rhs.getType() ) ? _type : rhs.getType();
-//        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
-        std::istringstream iss(rhs.toString());
-        T right;
-        iss >> right;
-        T res = _value - right;
-        std::string ss = std::to_string(res);
-        return (_op->createOperand(type, ss));
+        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
+        std::stringstream ss;
+        if (type < Float) {
+            long long val = std::stoll(_str) - std::stoll(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        else {
+            long double val = std::stold(_str) - std::stold(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        return (_op->createOperand(type, ss.str()));
     }
 
     IOperand const * operator*( IOperand const & rhs ) const {
         eOperandType type = ( _type >= rhs.getType() ) ? _type : rhs.getType();
-//        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
-        std::istringstream iss(rhs.toString());
-        T right;
-        iss >> right;
-        T res = _value * right;
-        std::string ss = std::to_string(res);
-        return (_op->createOperand(type, ss));
+        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
+        std::stringstream ss;
+        if (type < Float) {
+            long long val = std::stoll(_str) * std::stoll(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        else {
+            long double val = std::stold(_str) * std::stold(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        return (_op->createOperand(type, ss.str()));
     }
 
     IOperand const * operator/( IOperand const & rhs ) const {
         eOperandType type = ( _type >= rhs.getType() ) ? _type : rhs.getType();
-//        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
-        std::istringstream iss(rhs.toString());
-        T right;
-        iss >> right;
-        T res = _value / right;
-        std::string ss = std::to_string(res);
-        return (_op->createOperand(type, ss));
+        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
+        std::stringstream ss;
+        if (type < Float) {
+            long long val = std::stoll(_str) / std::stoll(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        else {
+            long double val = std::stold(_str) / std::stold(rhs.toString());
+            ss << std::setprecision(precision) << val;
+        }
+        return (_op->createOperand(type, ss.str()));
     }
 
     IOperand const * operator%( IOperand const & rhs ) const {
         eOperandType type = ( _type >= rhs.getType() ) ? _type : rhs.getType();
+        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
         if (type > Int32)
             throw AvmExcept("ERROR: mod with fp value");
-//        int precision = ( _precision >= rhs.getPrecision() ) ? _precision: rhs.getPrecision();
-        std::istringstream iss(rhs.toString());
-        int right;
-        iss >> right;
-        int res = static_cast<int>(_value) % right;
-        std::string ss = std::to_string(res);
-        return (_op->createOperand(type, ss));
+        std::stringstream ss;
+        long long val = std::stoll(_str) % std::stoll(rhs.toString());
+        ss << std::setprecision(precision) << val;
+
+        return (_op->createOperand(type, ss.str()));
     }
 
     std::string const & toString() const {
@@ -137,17 +150,17 @@ public:
         Type max = std::numeric_limits<T>::max();
         Type min = std::numeric_limits<T>::lowest();
         if (val > max)
-            throw std::range_error("ERROR: OVERFLOW");
+            throw AvmExcept("ERROR: OVERFLOW");
         if (val < min)
-            throw std::range_error("ERROR: UNDERFLOW");
+            throw AvmExcept("ERROR: UNDERFLOW");
     }
 
 private:
-    eOperandType    _type;
-    int             _precision;
-    std::string     _str;
-    const OperandFactory  *_op;
-    T               _value;
+    eOperandType            _type;
+    int                     _precision;
+    std::string             _str;
+    const OperandFactory    *_op;
+    T                       _value;
 };
 
 #endif //AVM_OPERAND_HPP

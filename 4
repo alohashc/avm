@@ -1,0 +1,24 @@
+;
+;pop should remove value from stack
+;
+push int16(42)
+push float(43.35)
+dump
+pop
+dump
+;
+;assert tests
+;
+assert int16(42)
+assert int8(42)
+assert int16(43)
+;
+;print tests
+;
+print
+push int8(42)
+print
+push int8(-42)
+print
+dump
+exit

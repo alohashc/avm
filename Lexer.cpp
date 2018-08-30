@@ -101,8 +101,9 @@ Token Lexer::isInst(int &cnt, std::string &str, std::istringstream &iss) {
         throw AvmExcept("ERROR: <push> and <assert> using only with value");
     std::map<std::string, tokenType>::iterator it;
     it = instr.find(str);
-    if (it == instr.end())
-        throw AvmExcept("ERROR: invalid instruction ");
+    if (it == instr.end()) {
+        throw AvmExcept("ERROR: invalid instruction");
+    }
     token._type = it->second;
     token._value = it->first;
     if (str != "push" && str != "assert")
@@ -130,12 +131,12 @@ Token Lexer::isValue(std::string &str) {
             }
         }
         if (found == std::string::npos) {
-            _tokens.pop_front();
+            _tokens.pop_back();
             throw AvmExcept("ERROR: invalid type of value");
         }
     }
     else {
-        _tokens.pop_front();
+        _tokens.pop_back();
         throw AvmExcept("ERROR: invalid value");
     }
     return token;
